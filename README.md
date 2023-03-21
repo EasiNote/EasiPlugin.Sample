@@ -111,3 +111,9 @@ var text = Lang.Get("Lang.BoardEditContextMenu.EasiPluginSampleElementTool");
 ```csharp
 SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 ```
+
+## 插件群
+
+QQ群：619366360
+
+如有使用问题，可到插件群反馈
