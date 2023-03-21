@@ -173,6 +173,20 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 
 获取文本的字符范围时，要求当前文本框已布局渲染完成。如当前文本正在被编辑，可以通过 `TextEditor.RenderCompleted` 事件等待文本布局渲染完成
 
+### 获取组合内的文本元素
+
+文本元素可以放入到组合里面，想要获取组合内的元素可使用如下代码方式获取
+
+```csharp
+            foreach (var groupElement in currentSlide.Elements.OfType<GroupElement>())
+            {
+                foreach (var textElement in groupElement.Elements.OfType<TextElement>())
+                {
+                    // 这是获取组合内元素的例子
+                }
+            }
+```
+
 ## 插件群
 
 QQ群：619366360

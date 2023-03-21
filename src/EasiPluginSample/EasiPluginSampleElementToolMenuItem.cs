@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Cvte.EasiNote;
+using Cvte.Paint.Features.Elements;
 using Cvte.Paint.Features.Elements.Texts;
 using Cvte.Windows.Input;
 using dotnetCampus.EasiPlugins;
@@ -62,6 +63,14 @@ namespace EasiPluginSample
 
                     // 通过 WPF 的坐标系转换方法可以转换为页面坐标系
                     var charTopLeftInSlide = firstTextElement.TextEditor.TranslatePoint(bounds.TopLeft,currentSlide);
+                }
+            }
+
+            foreach (var groupElement in currentSlide.Elements.OfType<GroupElement>())
+            {
+                foreach (var textElement in groupElement.Elements.OfType<TextElement>())
+                {
+                    // 这是获取组合内元素的例子
                 }
             }
         }
