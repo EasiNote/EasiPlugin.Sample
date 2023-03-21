@@ -1,0 +1,16 @@
+<Project>
+  <Import Project="build\Version.props" />
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)</PackageOutputPath>
+    <Company>广州视睿电子科技有限公司</Company>
+
+    <Author>希沃白板官方开发团队</Author>
+    <Authors>希沃白板官方开发团队</Authors>
+    <RepositoryUrl>https://github.com/EasiNote/EasiPlugin.Sample</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/EasiNote/EasiPlugin.Sample</PackageProjectUrl>
+
+    <RepositoryType>git</RepositoryType>
+    <Copyright>Copyright © 2023 Guangzhou Shirui Electronics Co.,Ltd, All Rights Reserved.</Copyright>
+  </PropertyGroup>
+</Project>

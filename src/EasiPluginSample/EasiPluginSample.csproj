@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+
+    <Product>EN 插件 SDK 示例插件</Product>
+    <Description>请在此添加插件描述信息。</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="dotnetCampus.EasiPlugin.Sdk" Version="2.0.0-alpha109" />
+  </ItemGroup>
+</Project>
