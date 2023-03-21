@@ -112,6 +112,12 @@ var text = Lang.Get("Lang.BoardEditContextMenu.EasiPluginSampleElementTool");
 SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 ```
 
+## 开发入门
+
+请参考本示例代码进行开发
+
+进入 Program.cs 文件。此文件里面包含插件入口。在 OnRunning 方法里编写插件运行初始化代码
+
 ## 插件群
 
 QQ群：619366360
