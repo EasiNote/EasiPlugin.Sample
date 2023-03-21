@@ -43,7 +43,7 @@ Win10 及更高版本
 
 - 配置插件：这是最为广泛的希沃白板插件形态。技术原理为修改计算机的各项配置，和希沃白板的各项配置内容，作为开关的存在，打开或修改希沃白板的隐藏开关，从而决定希沃白板不同的功能展现
 - 原生插件：这是定制性最强的插件，通过 .NET 插件机制，作为插件程序集注入到希沃白板内。当前可使用整个希沃白板公开的类型和成员。有着无限的开发想象空间
-- Web 插件：支持嵌入网页的形式，通过第三方网页提供的功能。限制极大，但比较独立。技术原理为希沃白板内使用 CEF 浏览器打开给定的网址。文档请参阅 [asiNote.ClientWebApi.Documentation](https://github.com/EasiNote/EasiNote.ClientWebApi.Documentation)
+- Web 插件：支持嵌入网页的形式，通过第三方网页提供的功能。限制极大，但比较独立。技术原理为希沃白板内使用 CEF 浏览器打开给定的网址。文档请参阅 [EasiNote.ClientWebApi.Documentation](https://github.com/EasiNote/EasiNote.ClientWebApi.Documentation)
 
 本仓库为 `原生插件` 的示例
 
