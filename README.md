@@ -16,7 +16,7 @@ VisualStudio 2022 17.5.2 及更高版本
 
 或者将 `packages` 文件夹下的 `dotnetcampus.easiplugin.sdk.2.0.0-alpha109.nupkg` 文件导入到自己本地包源或私有的 NuGet 服务器上
 
-默认已通过 `NuGet.config` 文件夹配置指定了本地包源为 `packages` 文件夹，但是否生效取决于 Visual Studio 的心情，如发现还原 `dotnetCampus.EasiPlugin.Sdk` 包版本失败，还请执行配置好本地 NuGet 包源
+默认已通过 `NuGet.config` 文件夹配置指定了本地包源为 `packages` 文件夹，但是否生效取决于 Visual Studio 的心情，如发现还原 `dotnetCampus.EasiPlugin.Sdk` 包版本失败，还请自行配置好本地 NuGet 包源
 
 ### EasiNote 希沃白板
 
