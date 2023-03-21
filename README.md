@@ -118,6 +118,61 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 
 进入 Program.cs 文件。此文件里面包含插件入口。在 OnRunning 方法里编写插件运行初始化代码
 
+## 开发示例
+
+### 获取 Shell 端的备课页面
+
+获取备课当前页面可以使用以下代码
+
+```csharp
+            var currentSlide = EN.EditingBoardApi.CurrentSlide;
+```
+
+获取备课下所有页面可以使用以下代码
+
+```csharp
+            var slides = EN.EditingBoardApi.Slides;
+```
+
+获取授课下的当前页面可以使用以下代码
+
+```csharp
+            var currentSlide = EN.DisplayingBoardApi.CurrentSlide;
+```
+
+### 获取页面里面的文本元素
+
+页面里面的元素存放在 Slide 类型的 Elements 属性里面，只获取文本元素可使用 `Slide.Elements.OfType<TextElement>()` 的方式获取，如此即可获取到 Slide 页面里面的所有文本元素
+
+如需只取当前页面的首个文本元素，可以使用以下代码
+
+```csharp
+            var currentSlide = EN.EditingBoardApi.CurrentSlide;
+
+            // 文本元素对应的是 TextElement 类型
+            var firstTextElement = currentSlide.Elements.OfType<TextElement>().FirstOrDefault();
+```
+
+### 获取文本的字符相对于页面的坐标
+
+在获取到 TextElement 对象之后，可以使用 GetRunBoundsByDocumentOffset 方法获取给定字符序号的相对于文本的字符范围，如以下代码所示
+
+```csharp
+               var charCount = firstTextElement.TextEditor.CharCount;
+                for (int i = 0; i < charCount; i++)
+                {
+                    // 获取每个字符相对于文本元素的坐标
+                    var bounds = firstTextElement.TextEditor.GetRunBoundsByDocumentOffset(i);
+
+                    // 通过 WPF 的坐标系转换方法可以转换为页面坐标系
+                    var charTopLeftInSlide = firstTextElement.TextEditor.TranslatePoint(bounds.TopLeft,currentSlide);
+                }
+```
+
+以上代码可在 `EasiPluginSampleElementToolMenuItem.GetTextBounds` 找到可执行例子
+
+获取文本的字符范围时，要求当前文本框已布局渲染完成。如当前文本正在被编辑，可以通过 `TextEditor.RenderCompleted` 事件等待文本布局渲染完成
+
 ## 插件群
 
 QQ群：619366360
