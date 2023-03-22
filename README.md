@@ -184,7 +184,7 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 在获取到 TextElement 对象之后，可以使用 GetRunBoundsByDocumentOffset 方法获取给定字符序号的相对于文本的字符范围，如以下代码所示
 
 ```csharp
-               var charCount = firstTextElement.TextEditor.CharCount;
+                var charCount = firstTextElement.TextEditor.CharCount;
                 for (int i = 0; i < charCount; i++)
                 {
                     // 获取每个字符相对于文本元素的坐标

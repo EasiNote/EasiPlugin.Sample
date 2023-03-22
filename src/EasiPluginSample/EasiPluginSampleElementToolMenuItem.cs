@@ -3,10 +3,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+
 using Cvte.EasiNote;
 using Cvte.Paint.Features.Elements;
 using Cvte.Paint.Features.Elements.Texts;
 using Cvte.Windows.Input;
+
 using dotnetCampus.EasiPlugins;
 
 namespace EasiPluginSample
@@ -64,11 +66,11 @@ namespace EasiPluginSample
                     var bounds = firstTextElement.TextEditor.GetRunBoundsByDocumentOffset(i);
 
                     // 通过 WPF 的坐标系转换方法可以转换为页面坐标系
-                    var charTopLeftInSlide = firstTextElement.TextEditor.TranslatePoint(bounds.TopLeft,currentSlide);
+                    var charTopLeftInSlide = firstTextElement.TextEditor.TranslatePoint(bounds.TopLeft, currentSlide);
 
                     // 在页面坐标系基础上，修改当前元素的坐标
                     // 先使用有趣的算法算出新的坐标，以下代码是随便写的算法
-                    newTextElementPosition = charTopLeftInSlide with {X = (charTopLeftInSlide.X + newTextElementPosition.X)/2 };
+                    newTextElementPosition = charTopLeftInSlide with { X = (charTopLeftInSlide.X + newTextElementPosition.X) / 2 };
                 }
 
                 // 设置当前元素的新范围

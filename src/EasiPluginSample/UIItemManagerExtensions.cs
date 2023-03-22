@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
+
 using Cvte.EasiNote;
 using Cvte.Windows.Localization;
 
@@ -23,7 +24,7 @@ static class UIItemManagerExtensions
     public static void AppendWithLang(this IUIItemManager manager, UIItem item,
         UIItemAttribute attribute, IList<UIItemLangInfo> langInfoList)
     {
-        manager.Append(c=> item, attribute);
+        manager.Append(c => item, attribute);
 
         string menuName;
         if (attribute.Purposes[0] == UIItemPurposes.BoardEditMenu)
