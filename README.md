@@ -14,7 +14,7 @@ VisualStudio 2022 17.5.2 及更高版本
 
 由于当前 `dotnetCampus.EasiPlugin.Sdk` 包的新版本依然还是 alpha 预览模式，没有发布到 NuGet.Org 上，因此需要配置本地的 NuGet 包源为 `packages` 文件夹
 
-或者将 `packages` 文件夹下的 `dotnetcampus.easiplugin.sdk.2.0.0-alpha109.nupkg` 文件导入到自己本地包源或私有的 NuGet 服务器上
+或者将 `packages` 文件夹下的 `dotnetcampus.easiplugin.sdk.2.0.0-alpha202.nupkg` 文件导入到自己本地包源或私有的 NuGet 服务器上
 
 默认已通过 `NuGet.config` 文件夹配置指定了本地包源为 `packages` 文件夹，但是否生效取决于 Visual Studio 的心情，如发现还原 `dotnetCampus.EasiPlugin.Sdk` 包版本失败，还请自行配置好本地 NuGet 包源
 
