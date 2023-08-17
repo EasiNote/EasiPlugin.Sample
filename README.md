@@ -213,41 +213,41 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
             }
 ```
 
-### 退出EasiNote 进程
+### 退出 EasiNote 进程
 
 ```csharp
 
-             ShellFlowHelper.EnsureShutdown("退出希沃白板5");
+             ShellFlowHelper.EnsureShutdown("退出希沃白板5的原因");
 
 ```
 
-### 导出Enbx为本地文件
+### 导出 Enbx 为本地文件
 
 ```csharp
 
 
-                 var storageModel = await  EN.CurrentBoardApi.GetStorageModelAsync();
+                 var storageModel = await EN.CurrentBoardApi.GetStorageModelAsync();
                  string filePath = "你所要导出的路径";
                  Container.Current.Get<IEnbxStorageProvider>().ExportEnb(storageModel.Model, filePath);
 
 ```
 
 
-### 监听PPT 转换 ENBX 完成事件
+### 监听 PPTX 转换 ENBX 完成事件
 
 
 ```csharp
 
-            var iPptxToEnbxConverter = await Container.Current.GetAsync<IPptxToEnbxConverter>();
-            if (iPptxToEnbxConverter is PptxToEnbxConverter pptxToEnbxConverter)
+            var converter = await Container.Current.GetAsync<IPptxToEnbxConverter>();
+            if (converter is PptxToEnbxConverter pptxToEnbxConverter)
             {
-                //订阅Pptx导入成功后的事件
+                // 订阅Pptx导入成功后的事件
                 pptxToEnbxConverter.PptxToEnbxConverted += PptxToEnbxConverter_PptxToEnbxConverted;
             }
 
         private static void PptxToEnbxConverter_PptxToEnbxConverted(object? sender, PptxToEnbxConvertedEventArgs e)
         {
-            //处理Pptx导入成功后的逻辑
+            // 处理Pptx导入成功后的逻辑
         }
 
 
