@@ -8,6 +8,14 @@
 
     <Product>EN 插件 SDK 示例插件</Product>
     <Description>请在此添加插件描述信息。</Description>
+
+    <!-- 引用 EasiNote 的默认级别：
+          - none: 无任何 EasiNote 依赖
+          - api: 仅 API 和 API 的依赖
+          - core: 包含大多数功能的程序集（不含扩展功能）
+          - most: 绝大多数程序集（包含扩展功能）
+          - all: 所有会加载到 EasiNote 进程的托管程序集 -->
+    <UseEasiNote>all</UseEasiNote>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="dotnetCampus.EasiPlugin.Sdk" Version="2.0.0-alpha202" />
