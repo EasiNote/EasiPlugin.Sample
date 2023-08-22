@@ -253,6 +253,184 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 
 ```
 
+### 修改存储创建对象逻辑
+
+创建自定义 `InterfaceCreator.GetInterfaceInstance<ISaveInfoProvider>()` 元素，通过此方法调用注册创建逻辑
+
+### 开发工具栏
+
+备课工具栏
+
+```csharp
+    // [LangExport("选择窗格")]
+    // [UIItem(UIItemPurposes.HeadToolBar)]
+    public class EditorSelectionElementHeaderToolBarItem : HeadToolBarItem
+    {
+        public EditorSelectionElementHeaderToolBarItem()
+        {
+            Key = "EditorSelectionElementHeaderToolBarItem";
+            Type = UIItemTypes.Subject;
+
+            ImageSourceKey = Key;
+            ImageWidth = 20;
+            ImageHeight = 20;
+            SortHint = 251;
+
+            SetValue(TextProperty, "EditorSelectionElementHeaderToolBarItem");
+
+            Predicate = e => false;
+
+            Command = new DelegateCommand(() =>
+            {
+                var selectionElementWindow = new SelectionElementWindow()
+                {
+                    WindowStyle = WindowStyle.ToolWindow,
+                    Title = "选择窗格",
+                    Width = 200,
+                    Owner = Window.GetWindow(EN.EditingBoardApi.Board)
+                };
+
+                SafeEN.Collection.ReportEvent(EventId.OpenEditorSelectionElementWindow, string.Empty);
+                
+                selectionElementWindow.Show();
+            });
+
+            ResourceHelper.TryAddResource(ImageSourceKey, new DrawingImage()
+            {
+                Drawing = new GeometryDrawing
+                (
+                    brush: Brushes.Black,
+                    pen: null,
+                    geometry: Geometry.Parse(
+                        "M8.61,6.00333333333333 C8.45333333333333,6.00333333333333 8.3,6.04333333333333 8.16,6.12333333333333 C7.88333333333333,6.28 7.71,6.57666666666667 7.70666666666667,6.89666666666667 L7.70666666666667,26.4233333333333 C7.70333333333333,26.7466666666667 7.88,27.0466666666667 8.16333333333333,27.2066666666667 8.39333333333333,27.3433333333333 8.67666666666667,27.3666666666667 8.93,27.27 L14.03,19.6033333333333 18.75,27.7733333333333 C18.8466666666667,27.9366666666667 19.0033333333333,28.0533333333333 19.1833333333333,28.1 19.3633333333333,28.1533333333333 19.5566666666667,28.1266666666667 19.7166666666667,28.03 L20.9533333333333,27.32 C21.1166666666667,27.2266666666667 21.2333333333333,27.0733333333333 21.2833333333333,26.8933333333333 21.33,26.71 21.3066666666667,26.5166666666667 21.21,26.3533333333333 L16.3533333333333,17.9833333333333 26.0666666666667,17.3566666666667 C26.3,17.1733333333333 26.4233333333333,16.8833333333333 26.4,16.5866666666667 C26.3766666666667,16.2933333333333 26.2066666666667,16.03 25.9466666666667,15.8833333333333 L9.05666666666667,6.12 C8.92,6.04 8.76333333333333,6.00333333333333 8.61,6.00333333333333 Z M8.63,4.57333333333333 C9.03,4.57333333333333 9.43,4.67666666666667 9.79,4.88333333333333 L26.68,14.6466666666667 C27.4,15.06 27.8466666666667,15.8266666666667 27.8466666666667,16.66 C27.8466666666667,17.49 27.4,18.26 26.68,18.6733333333333 L26.5366666666667,18.7566666666667 18.7566666666667,19.2566666666667 22.4466666666667,25.6566666666667 C22.73,26.1466666666667 22.8066666666667,26.7266666666667 22.66,27.2766666666667 C22.5133333333333,27.8233333333333 22.1566666666667,28.2866666666667 21.6666666666667,28.57 L20.4366666666667,29.2833333333333 C20.11,29.4633333333333 19.7433333333333,29.56 19.37,29.56 19.1833333333333,29.5566666666667 18.9966666666667,29.5333333333333 18.8133333333333,29.4866666666667 18.2666666666667,29.34 17.8033333333333,28.9833333333333 17.52,28.4933333333333 L13.9633333333333,22.3 9.93333333333333,28.3566666666667 9.79,28.4366666666667 C9.07,28.85 8.18666666666667,28.8466666666667 7.46666666666667,28.4333333333333 C6.75,28.02 6.30666666666667,27.2533333333333 6.30666666666667,26.4233333333333 L6.30666666666667,6.89666666666667 C6.30666666666667,6.06666666666667 6.75,5.3 7.46666666666667,4.88666666666667 C7.82666666666667,4.68 8.22666666666667,4.57333333333333 8.63,4.57333333333333 Z")
+                ),
+            });
+        }
+    }
+
+    public static class ResourceHelper
+    {
+        public static bool TryAddResource(string key, object resource)
+        {
+            if (Application.Current.Resources[key] is null)
+            {
+                Application.Current.Resources[key] = resource;
+
+                return true;
+            }
+
+            return false;
+        }
+    }
+```
+
+备课工具栏多语言，可以通过 LangExport 特性设置多语言，但更推荐的是在主线程执行以下代码添加多语言
+
+```csharp
+                Lang.Sources.Add(new DictionaryLanguageSource
+                {
+                    [new CultureInfo("zh-CHS")] = new Dictionary<string, string>()
+                    {
+                        { "Lang.ToolTip.Insert.EditorSelectionElementHeaderToolBarItem.Title", "选择窗格" },
+                        { "Lang.ToolTip.Insert.EditorSelectionElementHeaderToolBarItem.Text", "打开元素选择窗格" },
+                        { "Lang.HeadToolBar.EditorSelectionElementHeaderToolBarItem", "选择窗格" }
+                    },
+                });
+```
+
+将 EditorSelectionElementHeaderToolBarItem 替换为自己的 Key 的值
+
+加上对应的注入，注入之前需要确保 IUIItemManager 已经注册到容器里面
+
+```csharp
+        private void ExportUIItems()
+        {
+            // 添加 UI 扩展。
+            var manager = Container.Current.Get<IUIItemManager>();
+            manager.Append(c => new LatexItem(), new UIItemAttribute(UIItemPurposes.HeadToolBar));
+            manager.Append(c => new EditLatexElementMenuItem(), new UIItemAttribute(UIItemPurposes.ElementEditMenu));
+        }
+```
+
+修改的执行代码如下
+
+```csharp
+        protected override async void OnRunning()
+        {
+            if (EN.CommandOptions.IsCloud)
+            {
+
+            }
+            else
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5)); // 等待各项初始化完成
+                var manager = Container.Current.Get<IUIItemManager>();
+                manager.Append(c => new ExportAsImageMenuItem(), new UIItemAttribute(UIItemPurposes.ElementEditMenu));
+
+                // 插件默认在后台线程执行，必须切换到主 UI 线程才能添加多语言
+                _ = System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    // 为 UI 扩展添加语言项。
+                    Lang.Sources.Add(new DictionaryLanguageSource
+                    {
+                        [Lang.Current] = new Dictionary<string, string>()
+                        {
+                            { "Lang.BoardEditContextMenu.ExportAsImage", "导出为图片" },
+                        },
+                    });
+                });
+            }
+        }
+    }
+```
+
+### 寻找界面控件
+
+使用 FindDecendents 方法
+
+### 获取 EN 安装路径
+
+读取以下注册表项即可
+
+```
+HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Seewo\EasiNote5
+```
+
+
+## 插件机制
+
+### 加上更多的引用
+
+默认的插件只引用希沃白板的大多数功能的程序集，可以通过以下配置设置插件引用希沃白板的程序集
+
+```xml
+  <PropertyGroup>
+
+    <!-- 引用 EasiNote 的默认级别：
+          - none: 无任何 EasiNote 依赖
+          - api: 仅 API 和 API 的依赖
+          - core: 包含大多数功能的程序集（不含扩展功能）
+          - most: 绝大多数程序集（包含扩展功能）
+          - all: 所有会加载到 EasiNote 进程的托管程序集 -->
+    <UseEasiNote>most</UseEasiNote>
+
+  </PropertyGroup>
+```
+
+以上配置是编写到 csproj 项目文件里面
+
+如果只是想单独加上某个 DLL 的引用，可以使用如下代码加上，以下示例加上 Cvte.Windows.Media.Imaging.Effect.dll 程序集
+
+```xml
+  <Target Name="IncludeEn" BeforeTargets="_ENSdkReferenceDlls">
+    <ItemGroup>
+      <EasiNoteReference Include="Cvte.Windows.Media.Imaging.Effect.dll"></EasiNoteReference>
+    </ItemGroup>
+  </Target>
+```
+
+
+
 
 ## 插件群
 
