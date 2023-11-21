@@ -14,7 +14,7 @@ VisualStudio 2022 17.5.2 及更高版本
 
 由于当前 `dotnetCampus.EasiPlugin.Sdk` 包的新版本依然还是 alpha 预览模式，没有发布到 NuGet.Org 上，因此需要配置本地的 NuGet 包源为 `packages` 文件夹
 
-或者将 `packages` 文件夹下的 `dotnetcampus.easiplugin.sdk.2.0.0-alpha202.nupkg` 文件导入到自己本地包源或私有的 NuGet 服务器上
+或者将 `packages` 文件夹下的 `dotnetcampus.easiplugin.sdk.2.0.0-alpha304.nupkg` 文件导入到自己本地包源或私有的 NuGet 服务器上
 
 默认已通过 `NuGet.config` 文件夹配置指定了本地包源为 `packages` 文件夹，但是否生效取决于 Visual Studio 的心情，如发现还原 `dotnetCampus.EasiPlugin.Sdk` 包版本失败，还请自行配置好本地 NuGet 包源
 
@@ -216,20 +216,15 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 ### 退出 EasiNote 进程
 
 ```csharp
-
              ShellFlowHelper.EnsureShutdown("退出希沃白板5的原因");
-
 ```
 
 ### 导出 Enbx 为本地文件
 
 ```csharp
-
-
                  var storageModel = await EN.CurrentBoardApi.GetStorageModelAsync();
                  string filePath = "你所要导出的路径";
                  Container.Current.Get<IEnbxStorageProvider>().ExportEnb(storageModel.Model, filePath);
-
 ```
 
 
@@ -237,7 +232,6 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 
 
 ```csharp
-
             var converter = await Container.Current.GetAsync<IPptxToEnbxConverter>();
             if (converter is PptxToEnbxConverter pptxToEnbxConverter)
             {
@@ -249,8 +243,6 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
         {
             // 处理Pptx导入成功后的逻辑
         }
-
-
 ```
 
 ### 修改存储创建对象逻辑
@@ -355,7 +347,7 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 修改的执行代码如下
 
 ```csharp
-        protected override async void OnRunning()
+        protected override async Task OnRunningAsync()
         {
             if (EN.CommandOptions.IsCloud)
             {
