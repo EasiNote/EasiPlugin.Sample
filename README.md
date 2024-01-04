@@ -142,7 +142,7 @@ SafeEN.Collection.ReportEvent(EventId.SampleEventId, "额外的内容");
 
 请参考本示例代码进行开发
 
-进入 Program.cs 文件。此文件里面包含插件入口。在 OnRunning 方法里编写插件运行初始化代码
+进入 Program.cs 文件。此文件里面包含插件入口。在 OnRunningAsync 方法里编写插件运行初始化代码
 
 ## 开发示例
 
