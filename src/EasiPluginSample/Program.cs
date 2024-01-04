@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading.Tasks;
-
 using Cvte.Composition;
 using Cvte.EasiNote;
 
@@ -9,13 +8,12 @@ namespace EasiPluginSample
 {
     class Program : dotnetCampus.EasiPlugins.EasiPlugin
     {
-        protected override void OnRunning()
+        protected override Task OnRunningAsync()
         {
             // 当插件被希沃白板加载时，此处的代码将会执行
             if (EN.CommandOptions.IsCloud)
             {
                 // 云课件逻辑
-
             }
             else
             {
@@ -29,6 +27,8 @@ namespace EasiPluginSample
                     EN.App.Ready += App_Ready;
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         private void App_Ready(object? sender, EventArgs e)
@@ -50,11 +50,12 @@ namespace EasiPluginSample
         {
             // 添加 UI 扩展。
             var manager = Container.Current.Get<IUIItemManager>();
-            manager.AppendWithLang(new EasiPluginSampleElementToolMenuItem(), new UIItemAttribute(UIItemPurposes.BoardEditMenu), new[]
-            {
-                // 为 UI 扩展添加语言项。
-                new UIItemLangInfo(new CultureInfo("zh-CHS"),"演示工具")
-            });
+            manager.AppendWithLang(new EasiPluginSampleElementToolMenuItem(),
+                new UIItemAttribute(UIItemPurposes.BoardEditMenu), new[]
+                {
+                    // 为 UI 扩展添加语言项。
+                    new UIItemLangInfo(new CultureInfo("zh-CHS"), "演示工具")
+                });
         }
     }
 }
