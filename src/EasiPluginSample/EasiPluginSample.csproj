@@ -18,6 +18,6 @@
     <UseEasiNote>all</UseEasiNote>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="dotnetCampus.EasiPlugin.Sdk" Version="2.0.0-alpha304" />
+    <PackageReference Include="dotnetCampus.EasiPlugin.Sdk" Version="2.0.0-alpha405" />
   </ItemGroup>
 </Project>

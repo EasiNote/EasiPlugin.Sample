@@ -422,7 +422,9 @@ HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Seewo\EasiNote5
 ```
 
 
+### 插件 SDK 版本记录
 
+- 2.0.0-alpha405 ： 适配希沃白板 5.2.4.8298 版本
 
 ## 插件群
 
