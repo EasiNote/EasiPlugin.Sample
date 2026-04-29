@@ -1,6 +1,10 @@
-# EasiPlugin.Sample
+﻿# EasiPlugin.Sample
 
 希沃白板插件示例
+
+## 入门建议
+
+本文档内容较长，十分推荐请你的 AI 阅读本文和示例代码仓库以了解开发细节
 
 ## 开发环境
 
@@ -12,11 +16,13 @@ VisualStudio 2026 及更高版本
 
 ### NuGet 配置
 
-由于当前 `dotnetCampus.EasiPlugin.Sdk` 包的新版本依然还是 alpha 预览模式，没有发布到 NuGet.Org 上，因此需要配置本地的 NuGet 包源为 `packages` 文件夹
+现在已经将 `dotnetCampus.EasiPlugin.Sdk` 包发布到 NuGet 上，可直接通过 NuGet 拉取： https://www.nuget.org/packages/dotnetCampus.EasiPlugin.Sdk
 
-或者将 `packages` 文件夹下的 `dotnetcampus.easiplugin.sdk.<版本号>.nupkg` 文件导入到自己本地包源或私有的 NuGet 服务器上
+~~ 由于当前 `dotnetCampus.EasiPlugin.Sdk` 包的新版本依然还是 alpha 预览模式，没有发布到 NuGet.Org 上，因此需要配置本地的 NuGet 包源为 `packages` 文件夹 ~~
 
-默认已通过 `NuGet.config` 文件夹配置指定了本地包源为 `packages` 文件夹，但是否生效取决于 Visual Studio 的心情，如发现还原 `dotnetCampus.EasiPlugin.Sdk` 包版本失败，还请自行配置好本地 NuGet 包源
+~~ 或者将 `packages` 文件夹下的 `dotnetcampus.easiplugin.sdk.<版本号>.nupkg` 文件导入到自己本地包源或私有的 NuGet 服务器上 ~~
+
+~~ 默认已通过 `NuGet.config` 文件夹配置指定了本地包源为 `packages` 文件夹，但是否生效取决于 Visual Studio 的心情，如发现还原 `dotnetCampus.EasiPlugin.Sdk` 包版本失败，还请自行配置好本地 NuGet 包源 ~~
 
 ### EasiNote 希沃白板
 
