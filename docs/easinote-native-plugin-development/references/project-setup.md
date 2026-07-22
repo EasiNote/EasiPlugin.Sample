@@ -2,6 +2,8 @@
 
 在新建希沃白板原生插件项目、修复项目文件、设置宿主调试或解释安装产物时读取本文。
 
+完成项目配置后，如需加入可运行的菜单、工具栏或元素操作，继续读取 [complete-examples.md](complete-examples.md)。
+
 ## 兼容性基线
 
 本文以 `net6.0-windows`、`dotnetCampus.EasiPlugin.Sdk` 2.1.1-alpha.3 和 EasiNote 5 为已知示例组合。宿主内部类型、安装目录、调试参数和安装包实现可能随版本变化；公开 SDK 类型应以项目实际还原的包为准，宿主行为应在目标 EasiNote 版本中验证。

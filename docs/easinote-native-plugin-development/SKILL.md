@@ -16,6 +16,7 @@ compatibility: Windows 10 或更高版本；Visual Studio 2022 17.5.2 或更高�
 4. 读取现有 `.csproj`、插件入口、相关 UI Item 和调试配置，再进行最小修改。
 5. 如果需要新建项目或调整调试配置，读取 [references/project-setup.md](references/project-setup.md)。
 6. 如果需要操作页面、元素、菜单、多语言、埋点、导出或宿主服务，读取 [references/api-recipes.md](references/api-recipes.md)。
+7. 如果用户要求完整代码、端到端示例，或任务需要同时组合入口、宿主就绪、UI 注册、多语言和业务逻辑，读取 [references/complete-examples.md](references/complete-examples.md)。
 
 ## 核心概念
 

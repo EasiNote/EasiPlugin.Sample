@@ -4,6 +4,8 @@
 
 除非段落明确称为“完整骨架”，本文代码均是局部 API 片段，假设调用方已经声明相关变量并引用对应命名空间。占位类型和方法（如 `MyToolWindow`、`RunWorkAsync`、`EventIds`）需要替换为插件自己的实现。
 
+需要可组合的完整项目代码时，读取 [complete-examples.md](complete-examples.md)。该文档包含插件入口、Ready 一次性初始化、右键菜单、多语言、文本坐标、顶部工具栏、Loading 任务和事件订阅示例。
+
 ## 目录
 
 - [Cloud 与 Shell 分流](#cloud-与-shell-分流)
