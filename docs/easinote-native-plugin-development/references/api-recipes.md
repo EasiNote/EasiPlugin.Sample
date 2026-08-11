@@ -4,7 +4,7 @@
 
 除非段落明确称为“完整骨架”，本文代码均是局部 API 片段，假设调用方已经声明相关变量并引用对应命名空间。占位类型和方法（如 `MyToolWindow`、`RunWorkAsync`、`EventIds`）需要替换为插件自己的实现。
 
-需要可组合的完整项目代码时，读取 [complete-examples.md](complete-examples.md)。该文档包含插件入口、Ready 一次性初始化、右键菜单、多语言、文本坐标、顶部工具栏、Loading 任务和事件订阅示例。
+需要可组合的完整项目代码时，读取 [complete-examples.md](complete-examples.md)。生命周期和容器服务等待规则见 [lifecycle-and-container.md](lifecycle-and-container.md)；顶部工具栏及“学科工具”的完整契约见 [head-toolbar-and-subject-tools.md](head-toolbar-and-subject-tools.md)。
 
 ## 目录
 
@@ -140,13 +140,19 @@ internal sealed class MyBoardMenuItem : BoardEditMenuItem
 }
 ```
 
-注册：
+注册前先异步等待管理器，再在 Dispatcher 中添加 UI Item：
 
 ```csharp
-var manager = Container.Current.Get<IUIItemManager>();
-manager.Append(
-    _ => new MyBoardMenuItem(),
-    new UIItemAttribute(UIItemPurposes.BoardEditMenu));
+var manager = await Container.Current
+    .GetAsync<IUIItemManager>()
+    .ConfigureAwait(false);
+
+await Application.Current.Dispatcher.InvokeAsync(() =>
+{
+    manager.Append(
+        _ => new MyBoardMenuItem(),
+        new UIItemAttribute(UIItemPurposes.BoardEditMenu));
+});
 ```
 
 `Predicate` 的入参表示当前选择上下文。根据真实功能决定是要求无选择、单选、特定元素类型还是任意多选。
@@ -155,19 +161,20 @@ Key 应在目标 UI purpose 的有效范围内保持稳定且不与其他项冲�
 
 ## 注册顶部工具栏
 
+顶部工具栏涉及稳定 Key、图片资源键、宿主语言键和用户工具栏配置。实现前读取 [head-toolbar-and-subject-tools.md](head-toolbar-and-subject-tools.md)。最小 Item 形态：
+
 ```csharp
 internal sealed class MyHeadToolBarItem : HeadToolBarItem
 {
     public MyHeadToolBarItem()
     {
-        Key = nameof(MyHeadToolBarItem);
-        Type = UIItemTypes.Subject;
-        ImageSourceKey = Key;
+        Key = "HeadToolBar.MyPlugin";
+        Type = UIItemTypes.Applications;
+        ImageSourceKey = "Image.ToolBar.MyPlugin.TabUI";
         ImageWidth = 20;
         ImageHeight = 20;
-        SortHint = 250;
-        SetValue(TextProperty, Key);
-        Predicate = _ => true;
+        SortHint = double.MaxValue;
+        SetValue(TextProperty, Lang.Get("Lang.HeadToolBar.MyPlugin"));
         Command = new DelegateCommand(Execute);
     }
 
@@ -177,15 +184,7 @@ internal sealed class MyHeadToolBarItem : HeadToolBarItem
 }
 ```
 
-注册：
-
-```csharp
-manager.Append(
-    _ => new MyHeadToolBarItem(),
-    new UIItemAttribute(UIItemPurposes.HeadToolBar));
-```
-
-图标资源必须在 UI Item 解析前可用。资源 Key 与 `ImageSourceKey` 保持一致，添加前检查是否已经存在，避免覆盖宿主或其他插件资源。
+若入口默认位于“学科工具”下拉，通常保持 `Predicate` 为空；最终位置还受用户已有工具栏配置影响。图片和语言资源必须在 Item 创建前于 Dispatcher 中注册，并与业务后缀 `MyPlugin` 保持一致。
 
 ## 添加多语言
 

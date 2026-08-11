@@ -39,6 +39,10 @@ Win10 及更高版本
 - .NET 6
 - WPF
 
+## AI 开发
+
+请将本仓库内的  `docs\easinote-native-plugin-development\SKILL.md` 技能给你的 AI 安装上，如此即可让你的 AI 解锁插件开发能力
+
 ## 术语表
 
 ### EasiPlugin

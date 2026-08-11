@@ -14,7 +14,7 @@
 
 ## 端到端示例：备课右键菜单插件
 
-此示例在 Shell 端等待宿主就绪，注册一个备课画板右键菜单，并在 UI 线程添加中文语言项。点击菜单后读取当前页面顶层文本元素数量，通过 WPF 消息框向用户显示结果，并上报不含敏感信息的数量埋点。
+此示例在 Shell 端等待 `IUIItemManager` 可用，随后在 UI 线程添加中文语言项并注册备课画板右键菜单。点击菜单后读取当前页面顶层文本元素数量，通过 WPF 消息框向用户显示结果，并上报不含敏感信息的数量埋点。
 
 文件清单：
 
@@ -57,7 +57,6 @@ Properties/launchSettings.json
 
 ```csharp
 using System.Globalization;
-using System.Threading;
 using System.Windows;
 using Cvte.Composition;
 using Cvte.EasiNote;
@@ -67,62 +66,28 @@ namespace TextElementCounterPlugin;
 
 internal sealed class Program : dotnetCampus.EasiPlugins.EasiPlugin
 {
-    private int _shellInitializationState;
-
     protected override Task OnRunningAsync()
     {
-        if (EN.CommandOptions.IsCloud)
-        {
-            return Task.CompletedTask;
-        }
-
-        EN.App.Ready += OnAppReady;
-        TryStartShell();
-
-        return Task.CompletedTask;
+        return EN.CommandOptions.IsCloud
+            ? Task.CompletedTask
+            : StartShellAsync();
     }
 
-    private void OnAppReady(object? sender, EventArgs e)
+    private static async Task StartShellAsync()
     {
-        TryStartShell();
+        var manager = await Container.Current
+            .GetAsync<IUIItemManager>()
+            .ConfigureAwait(false);
+
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            RegisterLanguages();
+            RegisterMenuItem(manager);
+        });
     }
 
-    private void TryStartShell()
+    private static void RegisterMenuItem(IUIItemManager manager)
     {
-        if (!EN.App.IsReady)
-        {
-            return;
-        }
-
-        if (Interlocked.CompareExchange(
-                ref _shellInitializationState,
-                1,
-                0) != 0)
-        {
-            return;
-        }
-
-        try
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                RegisterLanguages();
-                RegisterMenuItem();
-            });
-
-            Interlocked.Exchange(ref _shellInitializationState, 2);
-            EN.App.Ready -= OnAppReady;
-        }
-        catch (Exception exception)
-        {
-            Interlocked.Exchange(ref _shellInitializationState, 0);
-            ShowInitializationError(exception);
-        }
-    }
-
-    private static void RegisterMenuItem()
-    {
-        var manager = Container.Current.Get<IUIItemManager>();
         manager.Append(
             _ => new CountTextElementsMenuItem(),
             new UIItemAttribute(UIItemPurposes.BoardEditMenu));
@@ -135,27 +100,14 @@ internal sealed class Program : dotnetCampus.EasiPlugins.EasiPlugin
             [new CultureInfo("zh-CHS")] = new Dictionary<string, string>
             {
                 ["Lang.BoardEditContextMenu.CountTextElements"] = "统计文本元素",
-                ["Lang.TextElementCounter.Result"] = "当前页面有 {0} 个顶层文本元素。",
-                ["Lang.TextElementCounter.ErrorTitle"] = "插件初始化失败"
+                ["Lang.TextElementCounter.Result"] = "当前页面有 {0} 个顶层文本元素。"
             }
-        });
-    }
-
-    private static void ShowInitializationError(Exception exception)
-    {
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            MessageBox.Show(
-                exception.Message,
-                "插件初始化失败",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
         });
     }
 }
 ```
 
-这段入口代码先订阅 Ready 事件再检查状态，并用状态门防止并发重复初始化。语言项先于菜单注册；只有全部注册成功后才取消 Ready 订阅并进入完成状态。初始化失败会恢复可重试状态并显示错误。插件不在 Cloud 端注册备课菜单。
+这段入口代码不在 Cloud 端注册备课菜单。Shell 初始化直接等待真实依赖 `IUIItemManager`，再切换到 Dispatcher 注册语言和菜单；不额外叠加 Ready、固定延迟或无依据的并发状态机。宿主会观察 `OnRunningAsync` 返回的任务；若目标 SDK 的调用语义不同，应按项目现有日志和错误提示方式观察初始化异常。
 
 ### CountTextElementsMenuItem.cs
 
@@ -291,7 +243,7 @@ private void WaitForTextRender(
 
 ## 扩展示例：注册备课顶部工具栏
 
-以下示例创建一个顶部工具栏项，使用 WPF `DrawingImage` 注册简单图标资源。它是接入端到端示例 `TryStartShell` 的扩展代码，不是独立项目；工具栏项、资源和多语言都应在同一个 UI Dispatcher 操作中先后注册。
+以下示例创建一个顶部工具栏项，使用 WPF `DrawingImage` 注册简单图标资源。它是接入端到端示例 `StartShellAsync` 的扩展代码，不是独立项目；先等待 `IUIItemManager`，再在同一个 UI Dispatcher 操作中依次注册资源、多语言和工具栏项。完整 Key 与“学科工具”分流规则见 [head-toolbar-and-subject-tools.md](head-toolbar-and-subject-tools.md)。
 
 ### OpenToolWindowHeaderItem.cs
 
@@ -299,21 +251,25 @@ private void WaitForTextRender(
 using System.Windows;
 using Cvte.EasiNote;
 using Cvte.Windows.Input;
+using Cvte.Windows.Localization;
 
 namespace TextElementCounterPlugin;
 
 internal sealed class OpenToolWindowHeaderItem : HeadToolBarItem
 {
+    internal const string ItemKey = "HeadToolBar.TextElementTool";
+    internal const string ImageResourceKey =
+        "Image.ToolBar.TextElementTool.TabUI";
+
     public OpenToolWindowHeaderItem()
     {
-        Key = nameof(OpenToolWindowHeaderItem);
-        Type = UIItemTypes.Subject;
-        ImageSourceKey = Key;
+        Key = ItemKey;
+        Type = UIItemTypes.Applications;
+        ImageSourceKey = ImageResourceKey;
         ImageWidth = 20;
         ImageHeight = 20;
-        SortHint = 250;
-        SetValue(TextProperty, Key);
-        Predicate = _ => true;
+        SortHint = double.MaxValue;
+        SetValue(TextProperty, Lang.Get("Lang.HeadToolBar.TextElementTool"));
         Command = new DelegateCommand(ShowWindow);
     }
 
@@ -357,51 +313,62 @@ internal sealed class TextElementToolWindow : Window
 }
 ```
 
-### 注册工具栏和图标
+### 注册工具栏、图标和语言
+
+将以下调用接入 `StartShellAsync`。如果同一个入口还注册右键菜单，可复用已经获取的 `IUIItemManager`：
 
 ```csharp
-using System.Windows;
-using System.Windows.Media;
-using Cvte.Composition;
-using Cvte.EasiNote;
-
-private static void RegisterHeadToolBarItem()
+private static async Task RegisterHeadToolBarItemAsync()
 {
-    Application.Current.Dispatcher.Invoke(() =>
+    var manager = await Container.Current
+        .GetAsync<IUIItemManager>()
+        .ConfigureAwait(false);
+
+    await Application.Current.Dispatcher.InvokeAsync(() =>
     {
-        const string resourceKey = nameof(OpenToolWindowHeaderItem);
-
-        if (!Application.Current.Resources.Contains(resourceKey))
-        {
-            Application.Current.Resources[resourceKey] = new DrawingImage
-            {
-                Drawing = new GeometryDrawing(
-                    Brushes.Black,
-                    null,
-                    Geometry.Parse("M4,4 H28 V28 H4 Z M9,10 H23 V13 H9 Z M9,17 H23 V20 H9 Z"))
-            };
-        }
-
-        var manager = Container.Current.Get<IUIItemManager>();
+        RegisterHeadToolBarIcon();
+        RegisterHeadToolBarLanguages();
         manager.Append(
             _ => new OpenToolWindowHeaderItem(),
             new UIItemAttribute(UIItemPurposes.HeadToolBar));
     });
 }
-```
 
-为工具栏添加多语言时，按宿主版本注册对应键：
-
-```csharp
-Lang.Sources.Add(new DictionaryLanguageSource
+private static void RegisterHeadToolBarIcon()
 {
-    [new CultureInfo("zh-CHS")] = new Dictionary<string, string>
+    if (Application.Current.Resources.Contains(
+            OpenToolWindowHeaderItem.ImageResourceKey))
     {
-        ["Lang.HeadToolBar.OpenToolWindowHeaderItem"] = "文本元素工具",
-        ["Lang.ToolTip.Insert.OpenToolWindowHeaderItem.Title"] = "文本元素工具",
-        ["Lang.ToolTip.Insert.OpenToolWindowHeaderItem.Text"] = "打开文本元素工具窗口"
+        return;
     }
-});
+
+    var icon = new DrawingImage
+    {
+        Drawing = new GeometryDrawing(
+            Brushes.Black,
+            null,
+            Geometry.Parse(
+                "M3,2 H17 V18 H3 Z M6,6 H14 V8 H6 Z M6,10 H14 V12 H6 Z"))
+    };
+
+    icon.Freeze();
+    Application.Current.Resources[
+        OpenToolWindowHeaderItem.ImageResourceKey] = icon;
+}
+
+private static void RegisterHeadToolBarLanguages()
+{
+    Lang.Sources.Add(new DictionaryLanguageSource
+    {
+        [new CultureInfo("zh-CHS")] = new Dictionary<string, string>
+        {
+            ["Lang.HeadToolBar.TextElementTool"] = "文本元素工具",
+            ["Lang.ToolTip.Insert.TextElementTool.Title"] = "文本元素工具",
+            ["Lang.ToolTip.Insert.TextElementTool.Text"] =
+                "打开文本元素工具窗口"
+        }
+    });
+}
 ```
 
 ## 扩展示例：执行带取消的耗时任务

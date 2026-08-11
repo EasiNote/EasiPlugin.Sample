@@ -86,64 +86,44 @@ HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Seewo\EasiNote5
 
 ## 插件入口
 
-入口类型继承 `dotnetCampus.EasiPlugins.EasiPlugin`，并覆盖 `OnRunningAsync`。以下完整骨架展示 Cloud/Shell 分流、订阅后复查和一次性初始化门：
+入口类型继承 `dotnetCampus.EasiPlugins.EasiPlugin`，并覆盖 `OnRunningAsync`。入口先划分 Cloud 与 Shell 职责；具体初始化方法再等待它实际依赖的宿主服务：
 
 ```csharp
-using System.Threading;
 using Cvte.EasiNote;
 
 namespace MyEasiPlugin;
 
 internal sealed class Program : dotnetCampus.EasiPlugins.EasiPlugin
 {
-    private int _shellStarted;
-
     protected override Task OnRunningAsync()
     {
         if (EN.CommandOptions.IsCloud)
         {
-            RunCloud();
+            _ = StartCloudAsync();
         }
         else
         {
-            EN.App.Ready += OnAppReady;
-            TryRunShellOnce();
+            _ = StartShellAsync();
         }
 
         return Task.CompletedTask;
     }
 
-    private void OnAppReady(object? sender, EventArgs e)
+    private static Task StartCloudAsync()
     {
-        TryRunShellOnce();
+        return Task.CompletedTask;
     }
 
-    private void TryRunShellOnce()
+    private static Task StartShellAsync()
     {
-        if (!EN.App.IsReady)
-        {
-            return;
-        }
-
-        EN.App.Ready -= OnAppReady;
-
-        if (Interlocked.Exchange(ref _shellStarted, 1) == 0)
-        {
-            RunShell();
-        }
-    }
-
-    private static void RunCloud()
-    {
-    }
-
-    private static void RunShell()
-    {
+        return Task.CompletedTask;
     }
 }
 ```
 
-不要用无限延迟循环等待宿主。若具体服务在 `EN.App.Ready` 后仍延迟注册，应优先寻找该服务的明确就绪事件；只有没有事件且现有版本已验证时，才增加短延迟并解释原因。
+上例只展示入口形态。项目必须使用现有日志或错误提示机制观察启动任务异常，不能静默丢弃。若 Shell 功能依赖某个容器服务，直接在 `StartShellAsync` 中等待 `Container.Current.GetAsync<TService>()`；不要把 `EN.App.Ready`、固定延迟或 `Interlocked` 当作所有插件的默认模板。
+
+只有功能真实依赖整个应用 Ready 状态，并且已经确认目标版本的事件语义时，才使用 `EN.App.Ready`。详细决策见 [lifecycle-and-container.md](lifecycle-and-container.md)。
 
 ## launchSettings.json
 
